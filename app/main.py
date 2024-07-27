@@ -6,6 +6,7 @@ from pymongo import MongoClient
 
 from app.routes import cards as cards_router
 from app.routes import players as players_router
+from app.routes import metrics as metrics_router
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 env_path = os.path.join(basedir, '../.env')
@@ -30,3 +31,4 @@ def shutdown_db_client():
 
 app.include_router(cards_router.router, tags=["cards_router"], prefix="/card")
 app.include_router(players_router.router, tags=["players_router"], prefix="/player")
+app.include_router(metrics_router.router, tags=["metrics_router"], prefix="/metrics")

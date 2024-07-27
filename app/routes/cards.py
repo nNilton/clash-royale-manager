@@ -7,7 +7,7 @@ from app.repository.cards import CardRepository
 
 router = APIRouter()
 
-@router.get("/books", response_description="Listar livros", response_model=List[Card])
-def list_books(request: Request):
+@router.get("/", response_description="List All Cards", response_model=List[Card])
+def list_cards(request: Request):
     user_repo = CardRepository(request.app.database)
     return user_repo.get_all()
