@@ -99,6 +99,7 @@ def card_combination_transform(cards_combination, battletime_to_timestamp, tag, 
     return cards_combination_transform
 
 def load_battlelog(tag: str):
+    #TODO: COLOCAR NUM FOR PARA INSERIR TODAS PARTIDAS
     players_battlelog = get_player_battlelog(tag)[0]
 
     battletime_to_timestamp = int(datetime.strptime(players_battlelog["battleTime"], '%Y%m%dT%H%M%S.%fZ').timestamp())
