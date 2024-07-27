@@ -7,12 +7,25 @@ class CardRepository:
     def __init__(self, database):
         self.collection = database["cards"]
 
-    def create(self, card: Card) -> str:
-        result = self.collection.insert_one(card.dict(by_alias=True))
+    def size(self):
+        size = self.collection.count_documents({})
+        return size
+
+    def get_by_id(self, document_id):
+        document = self.collection.find_one({'_id': document_id})
+        return document
+
+    def get_all(self) -> List[Card]:
+        cards = self.collection.find()
+        return [Card(**card) for card in cards]
+
+    def create(self, card: Dict) -> str:
+        card_transform = Card.parse_obj(card)
+        card_dict = card_transform.dict()
+        card_dict["_id"] = card_dict["id"]
+        result = self.collection.insert_one(card_dict)
         return str(result.inserted_id)
 
-    def drop(self):
-        self.collection.drop()
     def create_many(self, cards: List[Card]) -> str:
         self.drop()
         transformed_cards = []
@@ -25,6 +38,5 @@ class CardRepository:
         result = self.collection.insert_many([card.dict(by_alias=True) for card in transformed_cards])
         return [str(inserted_id) for inserted_id in result.inserted_ids]
 
-    def get_all(self) -> List[Card]:
-        cards = self.collection.find()
-        return [Card(**card) for card in cards]
+    def drop(self):
+        self.collection.drop()

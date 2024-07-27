@@ -2,7 +2,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 class Card(BaseModel):
-    id: int = Field(alias="_id")
+    id: Optional[int] = Field(None, alias="_id")
     iconUrls: Any
     name: str
     rarity: str

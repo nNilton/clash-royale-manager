@@ -7,6 +7,8 @@ from pymongo import MongoClient
 from app.repository.cards import CardRepository
 from app.repository.players import PlayerRepository
 
+from itertools import combinations
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 env_path = os.path.join(basedir, '../../.env')
 
@@ -78,16 +80,22 @@ if __name__ == '__main__':
     mongodb_client = MongoClient(config["ATLAS_URI"])
     database = mongodb_client[config["DB_NAME"]]
 
+    card_repo = CardRepository(database)
     player_repo = PlayerRepository(database)
 
     try:
         cards_data = get_cards()
         cards_data_items = cards_data.get('items', [])
-        card_repo = CardRepository(database)
 
-        print(card_repo.create_many(cards_data_items))
+        if card_repo.size() > 0:
+            for card in cards_data_items:
+                card_document = card_repo.get_by_id(card["id"])
+                if not card_document:
+                    card_repo.create(card)
+        else:
+            card_repo.create_many(cards_data_items)
+
         players_in_leaderboard = get_leaderboard(2)
-        print(players_in_leaderboard)
 
         players_database_empty = False
         if player_repo.size() <= 0:
@@ -99,8 +107,8 @@ if __name__ == '__main__':
 
             if players_database_empty:
                 player_repo.create(player_data)
-                #players_battlelog = get_player_battlelog(player['tag'])
-                #print(players_battlelog)
+                # players_battlelog = get_player_battlelog(player['tag'])
+                # print(players_battlelog)
             else:
                 player_document = player_repo.get_by_id(player_tag)
                 if not player_document:
