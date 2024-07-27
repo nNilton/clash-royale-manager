@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 jsonify = "*"
 fastapi = {extras = ["all"], version = "*"}
 pymongo = {extras = ["srv"], version = "*"}
