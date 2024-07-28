@@ -47,3 +47,14 @@ class BattleLogCombinationRepository:
     def create(self, database_combination: BattleLogCombination, cards_combination: Dict) -> str:
         self.change_database(database_combination)
         self.collection.insert_many(cards_combination)
+
+    def find_win_rate_by_cardId_and_trophiesDiff(self, cardId, trophiesDiff):
+        self.change_database(BattleLogCombination.V1)
+        return self.collection.find(
+            {
+                'cardsIds': f'{cardId}',
+                'victory': True,
+                'crownsOpponent': {'$gte': 2},
+                'trophiesDiff': {'$lte': trophiesDiff}
+            }
+        )
