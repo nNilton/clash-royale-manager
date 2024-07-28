@@ -38,8 +38,10 @@ def query4(request: Request, cardId: str, trophiesDiff: int):
         'win_rate': wins / (wins+loses),
     }
 
-@router.get("/query5", response_description="", response_model=Any)
-def query5(request: Request):
-    #Acessando o mongo  database
-    #request.app.database
-    pass
+@router.get("/combo-cards/{size}/{min_timestamp}/{max_timestamp}/{winrate}", response_description='''
+Lista o combo de cartas (eg: carta 1, carta 2, carta 3... carta n) de
+tamanho N (parâmetro) que produziram mais de Y% (parâmetro) de
+vitórias ocorridas em um intervalo de timestamps (parâmetro).''', response_model=Any)
+def query5(request: Request, size: int, min_timestamp: int, max_timestamp: int, winrate: float):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_combo_cards_by_size_and_timestamp_and_win_rate(size, [min_timestamp,max_timestamp], winrate)

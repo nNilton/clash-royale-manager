@@ -71,3 +71,58 @@ class BattleLogCombinationRepository:
                 }
             }
         ])
+
+    def get_combo_cards_by_size_and_timestamp_and_win_rate(self, size:int, timestamp: list, win_rate:float):
+        self.change_database(BattleLogCombination.list()[size-1])
+        return self.collection.aggregate([
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': timestamp[0],
+                        '$lte': timestamp[1]
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'count': {
+                        '$sum': 1
+                    },
+                    'victories': {
+                        '$sum': {
+                            '$cond': [
+                                '$victory', 1, 0
+                            ]
+                        }
+                    }
+                }
+            }, {
+                '$project': {
+                    'count': 1,
+                    'victories': 1,
+                    'winrate': {
+                        '$cond': [
+                            {
+                                '$gt': [
+                                    '$count', 0
+                                ]
+                            }, {
+                                '$divide': [
+                                    '$victories', '$count'
+                                ]
+                            }, 0
+                        ]
+                    }
+                }
+            }, {
+                '$match': {
+                    'winrate': {
+                        '$gte': win_rate
+                    }
+                }
+            }, {
+                '$sort': {
+                    'winrate': -1
+                }
+            }
+        ])
