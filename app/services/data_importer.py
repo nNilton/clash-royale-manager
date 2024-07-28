@@ -98,9 +98,9 @@ def card_combination_transform(cards_combination, battletime_to_timestamp, tag, 
         cards_combination_transform.append(card_dict)
     return cards_combination_transform
 
-def load_battlelog(tag: str):
-    #TODO: COLOCAR NUM FOR PARA INSERIR TODAS PARTIDAS
-    players_battlelog = get_player_battlelog(tag)[0]
+def load_battlelog(players_battlelog: dict):
+    if(len(players_battlelog["team"][0]["cards"]) > 8 or players_battlelog["type"] in ('pathOfLegend', 'boatBattle')):
+        return
 
     battletime_to_timestamp = int(datetime.strptime(players_battlelog["battleTime"], '%Y%m%dT%H%M%S.%fZ').timestamp())
 
@@ -119,160 +119,44 @@ def load_battlelog(tag: str):
     team_tag = players_battlelog["team"][0]["tag"]
     opponent_tag = players_battlelog["opponent"][0]["tag"]
 
-    players_battlelog["battleTime"] = battletime_to_timestamp
-
     team_sorted_array = sorted(players_battlelog["team"][0]["cards"], key=lambda x: x['id'])
     opponent_sorted_array = sorted(players_battlelog["opponent"][0]["cards"], key=lambda x: x['id'])
 
     first_card_id_string = players_battlelog["team"][0]["cards"][0]["id"]
 
-    first_card_data = battle_log_combination_repo.find_by_timestamp_and_tag(battletime_to_timestamp, first_card_id_string)
+    first_card_data = battle_log_combination_repo.find_by_timestamp_and_tag(battletime_to_timestamp, team_tag)
     #Verifica se existe, se existir não insere nada no BD
     if first_card_data:
         return None
 
-
-    # sorted_data = sorted(team_sorted_array, key=lambda x: x['id'])
-    team_sorted_array_1 = list(combinations(team_sorted_array, 1))
-    team_sorted_array_2 = list(combinations(team_sorted_array, 2))
-    team_sorted_array_3 = list(combinations(team_sorted_array, 3))
-    team_sorted_array_4 = list(combinations(team_sorted_array, 4))
-    team_sorted_array_5 = list(combinations(team_sorted_array, 5))
-    team_sorted_array_6 = list(combinations(team_sorted_array, 6))
-    team_sorted_array_7 = list(combinations(team_sorted_array, 7))
-    team_sorted_array_8 = list(combinations(team_sorted_array, 8))
-
-    team_card_combination_1 = card_combination_transform(team_sorted_array_1, battletime_to_timestamp,
-                                                         team_tag,  # alterar
-                                                         team_trophiesDiff,  # alterar
-                                                         team_crowns, opponent_crowns,
-                                                         team_victory  # alterar
-                                                         )
-    team_card_combination_2 = card_combination_transform(team_sorted_array_2, battletime_to_timestamp,
-                                                        team_tag,  # alterar
-                                                        team_trophiesDiff,  # alterar
-                                                        team_crowns, opponent_crowns,
-                                                        team_victory  # alterar
-                                                        )
-    team_card_combination_3 = card_combination_transform(team_sorted_array_3, battletime_to_timestamp,
-                                                        team_tag,  # alterar
-                                                        team_trophiesDiff,  # alterar
-                                                        team_crowns, opponent_crowns,
-                                                        team_victory  # alterar
-                                                        )
-    team_card_combination_4 = card_combination_transform(team_sorted_array_4, battletime_to_timestamp,
-                                                        team_tag,  # alterar
-                                                        team_trophiesDiff,  # alterar
-                                                        team_crowns, opponent_crowns,
-                                                        team_victory  # alterar
-                                                        )
-    team_card_combination_5 = card_combination_transform(team_sorted_array_5, battletime_to_timestamp,
-                                                         team_tag,  # alterar
-                                                         team_trophiesDiff,  # alterar
-                                                         team_crowns, opponent_crowns,
-                                                         team_victory  # alterar
-                                                         )
-    team_card_combination_6 = card_combination_transform(team_sorted_array_6, battletime_to_timestamp,
-                                                        team_tag,  # alterar
-                                                        team_trophiesDiff,  # alterar
-                                                        team_crowns, opponent_crowns,
-                                                        team_victory  # alterar
-                                                        )
-    team_card_combination_7 = card_combination_transform(team_sorted_array_7, battletime_to_timestamp,
-                                                        team_tag,  # alterar
-                                                        team_trophiesDiff,  # alterar
-                                                        team_crowns, opponent_crowns,
-                                                        team_victory  # alterar
-                                                        )
-
-    team_card_combination_8 = card_combination_transform(team_sorted_array_8, battletime_to_timestamp,
-                                                         team_tag,  # alterar
-                                                         team_trophiesDiff,  # alterar
-                                                         team_crowns, opponent_crowns,
-                                                         team_victory  # alterar
-                                                         )
-
-    battle_log_combination_repo.create(BattleLogCombination.V1, team_card_combination_1)
-    battle_log_combination_repo.create(BattleLogCombination.V2, team_card_combination_2)
-    battle_log_combination_repo.create(BattleLogCombination.V3, team_card_combination_3)
-    battle_log_combination_repo.create(BattleLogCombination.V4, team_card_combination_4)
-    battle_log_combination_repo.create(BattleLogCombination.V5, team_card_combination_5)
-    battle_log_combination_repo.create(BattleLogCombination.V6, team_card_combination_6)
-    battle_log_combination_repo.create(BattleLogCombination.V7, team_card_combination_7)
-    battle_log_combination_repo.create(BattleLogCombination.V8, team_card_combination_8)
-
-
-
-    # battle_log_combination_repo.create(BattleLogCombination.V8, team_card_combination_8)
+    for i in range(1, 9):
+        battle_log_combination_repo.create(
+            BattleLogCombination.list()[i-1],
+            card_combination_transform(
+                list(combinations(team_sorted_array, i)),
+                battletime_to_timestamp,
+                team_tag,
+                team_trophiesDiff,
+                team_crowns,
+                opponent_crowns,
+                team_victory
+            )
+        )
     # --------------------OPONNENT
-    opponent_sorted_array_1 = list(combinations(opponent_sorted_array, 1))
-    opponent_sorted_array_2 = list(combinations(opponent_sorted_array, 2))
-    opponent_sorted_array_3 = list(combinations(opponent_sorted_array, 3))
-    opponent_sorted_array_4 = list(combinations(opponent_sorted_array, 4))
-    opponent_sorted_array_5 = list(combinations(opponent_sorted_array, 5))
-    opponent_sorted_array_6 = list(combinations(opponent_sorted_array, 6))
-    opponent_sorted_array_7 = list(combinations(opponent_sorted_array, 7))
-    opponent_sorted_array_8 = list(combinations(opponent_sorted_array, 8))
 
-    opponent_card_combination_1 = card_combination_transform(opponent_sorted_array_1, battletime_to_timestamp,
-                                                             opponent_tag,  # alterar
-                                                             opponent_trophiesDiff,  # alterar
-                                                             opponent_crowns, team_crowns,
-                                                             opponent_victory  # alterar
-                                                             )
-    opponent_card_combination_2 = card_combination_transform(opponent_sorted_array_2, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-    opponent_card_combination_3 = card_combination_transform(opponent_sorted_array_3, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-    opponent_card_combination_4 = card_combination_transform(opponent_sorted_array_4, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-    opponent_card_combination_5 = card_combination_transform(opponent_sorted_array_5, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-    opponent_card_combination_6 = card_combination_transform(opponent_sorted_array_6, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-    opponent_card_combination_7 = card_combination_transform(opponent_sorted_array_7, battletime_to_timestamp,
-                                                            opponent_tag,  # alterar
-                                                            opponent_trophiesDiff,  # alterar
-                                                            opponent_crowns, team_crowns,
-                                                            opponent_victory  # alterar
-                                                            )
-
-
-    opponent_card_combination_8 = card_combination_transform(opponent_sorted_array_8, battletime_to_timestamp,
-                                                             opponent_tag,  # alterar
-                                                             opponent_trophiesDiff,  # alterar
-                                                             opponent_crowns, team_crowns,
-                                                             opponent_victory  # alterar
-                                                             )
-
-    battle_log_combination_repo.create(BattleLogCombination.V1, opponent_card_combination_1)
-    battle_log_combination_repo.create(BattleLogCombination.V2, opponent_card_combination_2)
-    battle_log_combination_repo.create(BattleLogCombination.V3, opponent_card_combination_3)
-    battle_log_combination_repo.create(BattleLogCombination.V4, opponent_card_combination_4)
-    battle_log_combination_repo.create(BattleLogCombination.V5, opponent_card_combination_5)
-    battle_log_combination_repo.create(BattleLogCombination.V6, opponent_card_combination_6)
-    battle_log_combination_repo.create(BattleLogCombination.V7, opponent_card_combination_7)
-    battle_log_combination_repo.create(BattleLogCombination.V8, opponent_card_combination_8)
+    for i in range(1, 9):
+        battle_log_combination_repo.create(
+            BattleLogCombination.list()[i - 1],
+            card_combination_transform(
+                list(combinations(opponent_sorted_array, i)),
+                battletime_to_timestamp,
+                opponent_tag,
+                opponent_trophiesDiff,
+                opponent_crowns,
+                team_crowns,
+                opponent_victory
+            )
+        )
 
 
 if __name__ == '__main__':
@@ -295,7 +179,7 @@ if __name__ == '__main__':
         else:
             card_repo.create_many(cards_data_items)
 
-        players_in_leaderboard = get_leaderboard(2)
+        players_in_leaderboard = get_leaderboard(100)
 
         players_database_empty = False
         if player_repo.size() <= 0:
@@ -309,7 +193,10 @@ if __name__ == '__main__':
             if not player_document:
                 player_repo.create(player_data)
                 #--- BATTLELOG
-                load_battlelog(player_tag)
+                # importing only five matches
+                player_battlelog = get_player_battlelog(player_tag)[0:5]
+                for battle_log in player_battlelog:
+                    load_battlelog(battle_log)
 
 
 

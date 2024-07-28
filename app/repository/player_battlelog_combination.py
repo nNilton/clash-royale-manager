@@ -16,6 +16,10 @@ class BattleLogCombination(Enum):
     V7 = "battlelog_combination_v7"
     V8 = "battlelog_combination_v8"
 
+    @classmethod
+    def list(self):
+        return [self.V1, self.V2, self.V3, self.V4, self.V5, self.V6, self.V7, self.V8]
+
 
 class BattleLogCombinationRepository:
     def __init__(self, database):
