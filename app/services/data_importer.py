@@ -122,8 +122,6 @@ def load_battlelog(players_battlelog: dict):
     team_sorted_array = sorted(players_battlelog["team"][0]["cards"], key=lambda x: x['id'])
     opponent_sorted_array = sorted(players_battlelog["opponent"][0]["cards"], key=lambda x: x['id'])
 
-    first_card_id_string = players_battlelog["team"][0]["cards"][0]["id"]
-
     first_card_data = battle_log_combination_repo.find_by_timestamp_and_tag(battletime_to_timestamp, team_tag)
     #Verifica se existe, se existir não insere nada no BD
     if first_card_data:
