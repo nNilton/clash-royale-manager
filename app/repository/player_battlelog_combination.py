@@ -48,13 +48,12 @@ class BattleLogCombinationRepository:
         self.change_database(database_combination)
         self.collection.insert_many(cards_combination)
 
-    def get_matches_by_cardId_and_trophiesDiff_and_victory(self, cardId, trophiesDiff, victory):
+    def get_matches_by_cardId_and_trophiesDiff_and_victory(self, cardId, trophiesDiff):
         self.change_database(BattleLogCombination.V1)
         return self.collection.aggregate([
             {
                 '$match': {
                     'cardsIds': f'{cardId}',
-                    'victory': victory,
                     'crownsOpponent': {
                         '$gte': 2
                     },
@@ -62,11 +61,30 @@ class BattleLogCombinationRepository:
                         '$lte': trophiesDiff
                     }
                 }
-            }, {
+            },
+            {
                 '$group': {
                     '_id': '$cardsIds',
-                    'count': {
+                    'total': {
                         '$sum': 1
+                    },
+                    'wins': {
+                        '$sum': {
+                            '$cond': [
+                                '$victory', 1, 0
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                '$project': {
+                    'winRate': {
+                        '$cond': {
+                            'if': { '$gt': ['$total', 0] },
+                            'then': { '$divide': ['$wins', '$total'] },
+                            'else': 0
+                        }
                     }
                 }
             }

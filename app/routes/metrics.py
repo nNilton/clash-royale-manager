@@ -28,15 +28,7 @@ casos em que o vencedor possui Z% (parâmetro) menos troféus do que
 o perdedor e o perdedor derrubou ao menos duas torres do adversário.''', response_model=Any)
 def query4(request: Request, cardId: str, trophiesDiff: int):
     battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
-    winners = battlelog_combination_repo.get_matches_by_cardId_and_trophiesDiff_and_victory(cardId, trophiesDiff, True)
-    losers = battlelog_combination_repo.get_matches_by_cardId_and_trophiesDiff_and_victory(cardId, trophiesDiff, False)
-
-    wins = next(winners, {}).get('count', 0)
-    loses = next(losers, {}).get('count', 0)
-
-    return {
-        'win_rate': wins / (wins+loses),
-    }
+    return battlelog_combination_repo.get_matches_by_cardId_and_trophiesDiff_and_victory(cardId, trophiesDiff)
 
 @router.get("/combo-cards/{size}/{min_timestamp}/{max_timestamp}/{winrate}", response_description='''
 Lista o combo de cartas (eg: carta 1, carta 2, carta 3... carta n) de
