@@ -6,17 +6,6 @@ class IconUrls(BaseModel):
     medium: Optional[str] = None
     evolutionMedium: Optional[str] = None
 
-class Card(BaseModel):
-    name: str
-    id: int
-    level: int
-    starLevel: Optional[int] = None
-    maxLevel: int
-    rarity: str
-    count: int
-    elixirCost: Optional[int] = None
-    iconUrls: IconUrls
-
 class SupportCard(BaseModel):
     name: str
     id: int
@@ -30,7 +19,7 @@ class CurrentDeckCard(BaseModel):
     name: str
     id: int
     level: int
-    starLevel: int
+    starLevel: Optional[int] = None
     evolutionLevel: Optional[int] = None
     maxLevel: int
     maxEvolutionLevel: Optional[int] = None
@@ -107,18 +96,17 @@ class Player(BaseModel):
     challengeMaxWins: int
     tournamentCardsWon: int
     tournamentBattleCount: int
-    role: str
+    role: Optional[str] = None
     donations: int
     donationsReceived: int
     totalDonations: int
     warDayWins: int
     clanCardsCollected: int
-    clan: Clan
+    clan: Optional[Clan] = None
     arena: Arena
     leagueStatistics: LeagueStatistics
     badges: List[Badge]
     achievements: List[Achievement]
-    cards: List[Card]
     supportCards: List[SupportCard]
     currentDeck: List[CurrentDeckCard]
     currentDeckSupportCards: List[SupportCard]
