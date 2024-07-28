@@ -28,7 +28,15 @@ casos em que o vencedor possui Z% (parâmetro) menos troféus do que
 o perdedor e o perdedor derrubou ao menos duas torres do adversário.''', response_model=Any)
 def query4(request: Request, cardId: str, trophiesDiff: int):
     battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
-    return battlelog_combination_repo.find_win_rate_by_cardId_and_trophiesDiff(cardId, trophiesDiff)
+    winners = battlelog_combination_repo.get_matches_by_cardId_and_trophiesDiff_and_victory(cardId, trophiesDiff, True)
+    losers = battlelog_combination_repo.get_matches_by_cardId_and_trophiesDiff_and_victory(cardId, trophiesDiff, False)
+
+    wins = next(winners, {}).get('count', 0)
+    loses = next(losers, {}).get('count', 0)
+
+    return {
+        'win_rate': wins / (wins+loses),
+    }
 
 @router.get("/query5", response_description="", response_model=Any)
 def query5(request: Request):
