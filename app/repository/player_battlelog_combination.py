@@ -131,7 +131,7 @@ class BattleLogCombinationRepository:
             }, {
                 '$group': {
                     '_id': '$cardsIds',
-                    'count': {
+                    'totalMatches': {
                         '$sum': 1
                     },
                     'victories': {
@@ -144,17 +144,17 @@ class BattleLogCombinationRepository:
                 }
             }, {
                 '$project': {
-                    'count': 1,
+                    'totalMatches': 1,
                     'victories': 1,
-                    'winrate': {
+                    'winRate': {
                         '$cond': [
                             {
                                 '$gt': [
-                                    '$count', 0
+                                    '$totalMatches', 0
                                 ]
                             }, {
                                 '$divide': [
-                                    '$victories', '$count'
+                                    '$victories', '$totalMatches'
                                 ]
                             }, 0
                         ]
@@ -162,13 +162,13 @@ class BattleLogCombinationRepository:
                 }
             }, {
                 '$match': {
-                    'winrate': {
-                        '$gte': win_rate
+                    'winRate': {
+                        '$gt': win_rate
                     }
                 }
             }, {
                 '$sort': {
-                    'winrate': -1
+                    'winRate': -1
                 }
             }
         ])
