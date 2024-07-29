@@ -12,8 +12,12 @@
 }
 
 pre {
-  background-color: #f4f4f4;
+  background-color: #E3E6E6;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
+}
+
+body {
+  background-color: #E3E6E6;
 }
