@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
 from typing import Any
-from app.repository.player_battlelog_combination import BattleLogCombinationRepository
+from backend.repository.player_battlelog_combination import BattleLogCombinationRepository
 
 router = APIRouter()
 

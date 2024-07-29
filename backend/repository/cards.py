@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from app.models.cards import Card
+from backend.models.cards import Card
 
 
 class CardRepository:

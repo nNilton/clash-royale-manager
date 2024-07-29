@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from pymongo.collection import Collection
 
-from app.models.cards import Card
+from backend.models.cards import Card
 
 from enum import Enum
 

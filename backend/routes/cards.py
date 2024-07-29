@@ -2,8 +2,8 @@ from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
 
-from app.models.cards import Card
-from app.repository.cards import CardRepository
+from backend.models.cards import Card
+from backend.repository.cards import CardRepository
 
 router = APIRouter()
 

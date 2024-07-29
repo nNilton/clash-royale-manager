@@ -4,9 +4,8 @@ from fastapi import FastAPI
 from dotenv import dotenv_values
 from pymongo import MongoClient
 
-from app.routes import cards as cards_router
-from app.routes import players as players_router
-from app.routes import metrics as metrics_router
+from backend.routes import cards as cards_router, metrics as metrics_router
+from backend.routes import players as players_router
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 env_path = os.path.join(basedir, '../.env')

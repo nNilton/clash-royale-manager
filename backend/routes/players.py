@@ -1,8 +1,8 @@
 from bson import ObjectId
 from fastapi import APIRouter, Request, HTTPException
 
-from app.models.players import Player
-from app.repository.players import PlayerRepository
+from backend.models.players import Player
+from backend.repository.players import PlayerRepository
 
 router = APIRouter()
 

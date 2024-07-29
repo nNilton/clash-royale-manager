@@ -1,24 +1,28 @@
 import os
 import requests
 from urllib.parse import quote
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from pymongo import MongoClient
 
-from app.repository.cards import CardRepository
-from app.repository.player_battlelog_combination import BattleLogCombinationRepository, BattleLogCombination
-from app.repository.players import PlayerRepository
+from backend.repository.cards import CardRepository
+from backend.repository.player_battlelog_combination import BattleLogCombinationRepository, BattleLogCombination
+from backend.repository.players import PlayerRepository
 
 from datetime import datetime
 from itertools import combinations
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 env_path = os.path.join(basedir, '../../.env')
+load_dotenv(env_path)
 
-config = dotenv_values(env_path)
+# Exemplo de uso de variáveis de ambiente
+clash_royale_api_url = os.getenv("CLASH_ROYALE_API_URL")
+clash_royale_bearer = os.getenv("CLASH_ROYALE_BEARER")
 
-url = f"{config["CLASH_ROYALE_API_URL"]}"
+# Usar a variável em uma f-string corretamente
+url = f"{clash_royale_api_url}"
 headers = {
-    "Authorization": f"Bearer {config["CLASH_ROYALE_BEARER"]}"
+    "Authorization": f"Bearer {clash_royale_bearer}"
 }
 
 
@@ -158,8 +162,14 @@ def load_battlelog(players_battlelog: dict):
 
 
 if __name__ == '__main__':
-    mongodb_client = MongoClient(config["ATLAS_URI"])
-    database = mongodb_client[config["DB_NAME"]]
+    atlas_uri = os.getenv("ATLAS_URI")
+    db_name = os.getenv("DB_NAME")
+
+    mongodb_client = f"{atlas_uri}"
+    database = f"{db_name}"
+
+    mongodb_client = MongoClient(mongodb_client)
+    database = mongodb_client[database]
 
     card_repo = CardRepository(database)
     player_repo = PlayerRepository(database)

@@ -3,8 +3,8 @@ from typing import List, Dict
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from app.models.cards import Card
-from app.models.players import Player
+from backend.models.cards import Card
+from backend.models.players import Player
 
 
 class PlayerRepository:
