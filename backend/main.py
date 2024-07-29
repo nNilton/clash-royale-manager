@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI
 from dotenv import dotenv_values
 from pymongo import MongoClient
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.routes import cards as cards_router, metrics as metrics_router
 from backend.routes import players as players_router
@@ -13,6 +14,19 @@ env_path = os.path.join(basedir, '../.env')
 config = dotenv_values(env_path)
 
 app = FastAPI()
+
+# Configurar CORS
+origins = [
+    "http://localhost:3000",  # URL do frontend
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def startup_db_client():
