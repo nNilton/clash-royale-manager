@@ -12,8 +12,6 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: clash-royale-backend
-    environment:
-      - MONGO_URI=mongodb+srv://riantal:FxB5ctryICbQhWCP@cluster0.348txek.mongodb.net/
     ports:
       - "5000:5000"
       - "8000:8000"
