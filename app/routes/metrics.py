@@ -10,11 +10,12 @@ def query1(request: Request):
     #request.app.database
     pass
 
-@router.get("/query2", response_description="", response_model=Any)
-def query2(request: Request):
-    #Acessando o mongo  database
-    #request.app.database
-    pass
+@router.get("/deck/{min_timestamp}/{max_timestamp}/{winrate}", response_description='''
+Lista os decks completos que produziram mais de X% (parâmetro) de
+vitórias ocorridas em um intervalo de timestamps (parâmetro).''', response_model=Any)
+def query2(request: Request, min_timestamp: int, max_timestamp: int, winrate: float):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_combo_cards_by_size_and_timestamp_and_win_rate(8, [min_timestamp,max_timestamp], winrate)
 
 @router.get("/loses/{cardsIds}/{min_timestamp}/{max_timestamp}", response_description='''
 Calcula a quantidade de derrotas utilizando o combo de cartas
