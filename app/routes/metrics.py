@@ -16,11 +16,13 @@ def query2(request: Request):
     #request.app.database
     pass
 
-@router.get("/query3", response_description="", response_model=Any)
-def query3(request: Request):
-    #Acessando o mongo  database
-    #request.app.database
-    pass
+@router.get("/loses/{cardsIds}/{min_timestamp}/{max_timestamp}", response_description='''
+Calcula a quantidade de derrotas utilizando o combo de cartas
+(X1,X2, ...) (parâmetro) ocorridas em um intervalo de timestamps
+(parâmetro).''', response_model=Any)
+def query3(request: Request, cardsIds: str, min_timestamp: int, max_timestamp: int ):
+    battlelog_combination_repository = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repository.get_lose_count_by_cardIds_and_timestamps(cardsIds, [min_timestamp, max_timestamp])
 
 @router.get("/win-rate/{cardId}/{trophiesDiff}", response_description=
 '''Calcula a quantidade de vitórias envolvendo a carta X (parâmetro) nos

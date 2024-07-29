@@ -90,6 +90,34 @@ class BattleLogCombinationRepository:
             }
         ])
 
+    def get_lose_count_by_cardIds_and_timestamps(self, cardsIds:str, timestamp: list):
+        self.change_database(BattleLogCombination.list()[len(cardsIds.split('-'))-1])
+        return self.collection.aggregate([
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': timestamp[0],
+                        '$lte': timestamp[1]
+                    },
+                    'cardsIds': f'{cardsIds}',
+                }
+            }, {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'totalMatches': {
+                        '$sum': 1
+                    },
+                    'loses': {
+                        '$sum': {
+                            '$cond': [
+                                '$victory', 0, 1
+                            ]
+                        }
+                    }
+                }
+            }
+        ])
+
     def get_combo_cards_by_size_and_timestamp_and_win_rate(self, size:int, timestamp: list, win_rate:float):
         self.change_database(BattleLogCombination.list()[size-1])
         return self.collection.aggregate([
