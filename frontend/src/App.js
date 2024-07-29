@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
+
+let url = `localhost`;
 
 function App() {
   const [params, setParams] = useState({
@@ -8,11 +11,14 @@ function App() {
     param3: '',
     param4: ''
   });
-  const [winRateLoseRate, setWinRateLoseRate] = useState(null);
-  const [deck, setDeck] = useState(null);
-  const [loses, setLoses] = useState(null);
-  const [winRate, setWinRate] = useState(null);
-  const [comboCards, setComboCards] = useState(null);
+  const [results, setResults] = useState({
+    winRateLoseRate: null,
+    deck: null,
+    loses: null,
+    winRate: null,
+    comboCards: null
+  });
+  const [activeSection, setActiveSection] = useState(null);
 
   const handleChange = (e) => {
     setParams({
@@ -23,8 +29,8 @@ function App() {
 
   const fetchWinRateLoseRate = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/metrics/win-rate/lose-rate/${params.param1}/${params.param2}/${params.param3}`);
-      setWinRateLoseRate(response.data);
+      const response = await axios.get(`http://${url}:8000/metrics/win-rate/lose-rate/${params.param1}/${params.param2}/${params.param3}`);
+      setResults({ ...results, winRateLoseRate: response.data });
     } catch (error) {
       console.error(error);
     }
@@ -32,8 +38,8 @@ function App() {
 
   const fetchDeck = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/metrics/deck/${params.param1}/${params.param2}/${params.param3}`);
-      setDeck(response.data);
+      const response = await axios.get(`http://${url}:8000/metrics/deck/${params.param1}/${params.param2}/${params.param3}`);
+      setResults({ ...results, deck: response.data });
     } catch (error) {
       console.error(error);
     }
@@ -41,8 +47,8 @@ function App() {
 
   const fetchLoses = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/metrics/loses/${params.param1}/${params.param2}/${params.param3}`);
-      setLoses(response.data);
+      const response = await axios.get(`http://${url}:8000/metrics/loses/${params.param1}/${params.param2}/${params.param3}`);
+      setResults({ ...results, loses: response.data });
     } catch (error) {
       console.error(error);
     }
@@ -50,8 +56,8 @@ function App() {
 
   const fetchWinRate = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/metrics/win-rate/${params.param1}/${params.param2}`);
-      setWinRate(response.data);
+      const response = await axios.get(`http://${url}:8000/metrics/win-rate/${params.param1}/${params.param2}`);
+      setResults({ ...results, winRate: response.data });
     } catch (error) {
       console.error(error);
     }
@@ -59,66 +65,82 @@ function App() {
 
   const fetchComboCards = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/metrics/combo-cards/${params.param1}/${params.param2}/${params.param3}/${params.param4}`);
-      setComboCards(response.data);
-      console.log(response.data);
+      const response = await axios.get(`http://${url}:8000/metrics/combo-cards/${params.param1}/${params.param2}/${params.param3}/${params.param4}`);
+      setResults({ ...results, comboCards: response.data });
     } catch (error) {
       console.error(error);
     }
   };
 
+  const renderInputs = (fields) => {
+    return fields.map((field, index) => (
+      <input
+        key={index}
+        type="text"
+        name={field}
+        placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+        value={params[field]}
+        onChange={handleChange}
+      />
+    ));
+  };
+
+  const renderResults = (data) => {
+    return <pre>{JSON.stringify(data, null, 2)}</pre>;
+  };
+
   return (
     <div className="App">
       <h1>Clash Royale Metrics</h1>
-      <div>
-        <input
-          type="text"
-          name="param1"
-          placeholder="Param 1"
-          value={params.param1}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="param2"
-          placeholder="Param 2"
-          value={params.param2}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="param3"
-          placeholder="Param 3"
-          value={params.param3}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="param4"
-          placeholder="Param 4"
-          value={params.param4}
-          onChange={handleChange}
-        />
+      <div className="section">
+        <button onClick={() => setActiveSection('winRateLoseRate')}>Fetch Win Rate / Lose Rate</button>
+        {activeSection === 'winRateLoseRate' && (
+          <div className="inputs">
+            {renderInputs(['param1', 'param2', 'param3'])}
+            <button onClick={fetchWinRateLoseRate}>Submit</button>
+            {results.winRateLoseRate && renderResults(results.winRateLoseRate)}
+          </div>
+        )}
       </div>
-      <div>
-        <button onClick={fetchWinRateLoseRate}>Fetch Win Rate / Lose Rate</button>
-        {winRateLoseRate && <pre>{JSON.stringify(winRateLoseRate, null, 2)}</pre>}
+      <div className="section">
+        <button onClick={() => setActiveSection('deck')}>Fetch Deck</button>
+        {activeSection === 'deck' && (
+          <div className="inputs">
+            {renderInputs(['param1', 'param2', 'param3'])}
+            <button onClick={fetchDeck}>Submit</button>
+            {results.deck && renderResults(results.deck)}
+          </div>
+        )}
       </div>
-      <div>
-        <button onClick={fetchDeck}>Fetch Deck</button>
-        {deck && <pre>{JSON.stringify(deck, null, 2)}</pre>}
+      <div className="section">
+        <button onClick={() => setActiveSection('loses')}>Fetch Loses</button>
+        {activeSection === 'loses' && (
+          <div className="inputs">
+            {renderInputs(['param1', 'param2', 'param3'])}
+            <button onClick={fetchLoses}>Submit</button>
+            {results.loses && renderResults(results.loses)}
+          </div>
+        )}
       </div>
-      <div>
-        <button onClick={fetchLoses}>Fetch Loses</button>
-        {loses && <pre>{JSON.stringify(loses, null, 2)}</pre>}
+      <div className="section">
+        <button onClick={() => setActiveSection('winRate')}>Fetch Win Rate</button>
+        {activeSection === 'winRate' && (
+          <div className="inputs">
+            {renderInputs(['param1', 'param2'])}
+            <button onClick={fetchWinRate}>Submit</button>
+            {results.winRate && renderResults(results.winRate)}
+          </div>
+        )}
       </div>
-      <div>
-        <button onClick={fetchWinRate}>Fetch Win Rate</button>
-        {winRate && <pre>{JSON.stringify(winRate, null, 2)}</pre>}
-      </div>
-      <div>
-        <button onClick={fetchComboCards}>Fetch Combo Cards</button>
-        {comboCards && <pre>{JSON.stringify(comboCards, null, 2)}</pre>}
+      <div className="section">
+        <button onClick={() => setActiveSection('comboCards')}>Fetch Combo Cards</button>
+        {activeSection === 'comboCards' && (
+          <div className="inputs">
+            {renderInputs(['param1', 'param2', 'param3', 'param4'])}
+            <button onClick={fetchComboCards}>Submit</button>
+            {results.comboCards && renderResults(results.comboCards)}
+          </div>
+        )}
       </div>
     </div>
   );
