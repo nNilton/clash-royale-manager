@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Card, CardContent, Typography, CircularProgress, Container } from '@mui/material';
 import './App.css';
 
-let url = `localhost`;
+let url = `127.0.0.1`;
 
 function App() {
   const [params, setParams] = useState({
@@ -19,6 +20,7 @@ function App() {
     comboCards: null
   });
   const [activeSection, setActiveSection] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setParams({
@@ -28,59 +30,76 @@ function App() {
   };
 
   const fetchWinRateLoseRate = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://${url}:8000/metrics/win-rate/lose-rate/${params.param1}/${params.param2}/${params.param3}`);
       setResults({ ...results, winRateLoseRate: response.data });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchDeck = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://${url}:8000/metrics/deck/${params.param1}/${params.param2}/${params.param3}`);
       setResults({ ...results, deck: response.data });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchLoses = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://${url}:8000/metrics/loses/${params.param1}/${params.param2}/${params.param3}`);
       setResults({ ...results, loses: response.data });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchWinRate = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://${url}:8000/metrics/win-rate/${params.param1}/${params.param2}`);
       setResults({ ...results, winRate: response.data });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchComboCards = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://${url}:8000/metrics/combo-cards/${params.param1}/${params.param2}/${params.param3}/${params.param4}`);
       setResults({ ...results, comboCards: response.data });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const renderInputs = (fields) => {
     return fields.map((field, index) => (
-      <input
+      <TextField
         key={index}
-        type="text"
+        label={field.charAt(0).toUpperCase() + field.slice(1)}
         name={field}
-        placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
         value={params[field]}
         onChange={handleChange}
+        variant="outlined"
+        margin="normal"
+        fullWidth
       />
     ));
   };
@@ -90,59 +109,96 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Clash Royale Metrics</h1>
+    <Container maxWidth="md">
+      <Typography variant="h2" align="center" gutterBottom>
+        Clash Royale Metrics
+      </Typography>
       <div className="section">
-        <button onClick={() => setActiveSection('winRateLoseRate')}>Fetch Win Rate / Lose Rate</button>
+        <Button variant="contained" color="primary" onClick={() => setActiveSection('winRateLoseRate')}>
+          Fetch Win Rate / Lose Rate
+        </Button>
         {activeSection === 'winRateLoseRate' && (
-          <div className="inputs">
-            {renderInputs(['param1', 'param2', 'param3'])}
-            <button onClick={fetchWinRateLoseRate}>Submit</button>
-            {results.winRateLoseRate && renderResults(results.winRateLoseRate)}
-          </div>
+          <Card className="card">
+            <CardContent>
+              {renderInputs(['param1', 'param2', 'param3'])}
+              <Button variant="contained" color="secondary" onClick={fetchWinRateLoseRate} disabled={loading}>
+                Submit
+              </Button>
+              {loading && <CircularProgress />}
+              {results.winRateLoseRate && renderResults(results.winRateLoseRate)}
+            </CardContent>
+          </Card>
         )}
       </div>
       <div className="section">
-        <button onClick={() => setActiveSection('deck')}>Fetch Deck</button>
+        <Button variant="contained" color="primary" onClick={() => setActiveSection('deck')}>
+          Fetch Deck
+        </Button>
         {activeSection === 'deck' && (
-          <div className="inputs">
-            {renderInputs(['param1', 'param2', 'param3'])}
-            <button onClick={fetchDeck}>Submit</button>
-            {results.deck && renderResults(results.deck)}
-          </div>
+          <Card className="card">
+            <CardContent>
+              {renderInputs(['param1', 'param2', 'param3'])}
+              <Button variant="contained" color="secondary" onClick={fetchDeck} disabled={loading}>
+                Submit
+              </Button>
+              {loading && <CircularProgress />}
+              {results.deck && renderResults(results.deck)}
+            </CardContent>
+          </Card>
         )}
       </div>
       <div className="section">
-        <button onClick={() => setActiveSection('loses')}>Fetch Loses</button>
+        <Button variant="contained" color="primary" onClick={() => setActiveSection('loses')}>
+          Fetch Loses
+        </Button>
         {activeSection === 'loses' && (
-          <div className="inputs">
-            {renderInputs(['param1', 'param2', 'param3'])}
-            <button onClick={fetchLoses}>Submit</button>
-            {results.loses && renderResults(results.loses)}
-          </div>
+          <Card className="card">
+            <CardContent>
+              {renderInputs(['param1', 'param2', 'param3'])}
+              <Button variant="contained" color="secondary" onClick={fetchLoses} disabled={loading}>
+                Submit
+              </Button>
+              {loading && <CircularProgress />}
+              {results.loses && renderResults(results.loses)}
+            </CardContent>
+          </Card>
         )}
       </div>
       <div className="section">
-        <button onClick={() => setActiveSection('winRate')}>Fetch Win Rate</button>
+        <Button variant="contained" color="primary" onClick={() => setActiveSection('winRate')}>
+          Fetch Win Rate
+        </Button>
         {activeSection === 'winRate' && (
-          <div className="inputs">
-            {renderInputs(['param1', 'param2'])}
-            <button onClick={fetchWinRate}>Submit</button>
-            {results.winRate && renderResults(results.winRate)}
-          </div>
+          <Card className="card">
+            <CardContent>
+              {renderInputs(['param1', 'param2'])}
+              <Button variant="contained" color="secondary" onClick={fetchWinRate} disabled={loading}>
+                Submit
+              </Button>
+              {loading && <CircularProgress />}
+              {results.winRate && renderResults(results.winRate)}
+            </CardContent>
+          </Card>
         )}
       </div>
       <div className="section">
-        <button onClick={() => setActiveSection('comboCards')}>Fetch Combo Cards</button>
+        <Button variant="contained" color="primary" onClick={() => setActiveSection('comboCards')}>
+          Fetch Combo Cards
+        </Button>
         {activeSection === 'comboCards' && (
-          <div className="inputs">
-            {renderInputs(['param1', 'param2', 'param3', 'param4'])}
-            <button onClick={fetchComboCards}>Submit</button>
-            {results.comboCards && renderResults(results.comboCards)}
-          </div>
+          <Card className="card">
+            <CardContent>
+              {renderInputs(['param1', 'param2', 'param3', 'param4'])}
+              <Button variant="contained" color="secondary" onClick={fetchComboCards} disabled={loading}>
+                Submit
+              </Button>
+              {loading && <CircularProgress />}
+              {results.comboCards && renderResults(results.comboCards)}
+            </CardContent>
+          </Card>
         )}
       </div>
-    </div>
+    </Container>
   );
 }
 
