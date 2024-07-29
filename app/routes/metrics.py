@@ -4,11 +4,13 @@ from app.repository.player_battlelog_combination import BattleLogCombinationRepo
 
 router = APIRouter()
 
-@router.get("/query1", response_description="", response_model=Any)
-def query1(request: Request):
-    #Acessando o mongo  database
-    #request.app.database
-    pass
+@router.get("/win-rate/lose-rate/{cardId}/{min_timestamp}/{max_timestamp}", response_description='''
+Calcula a porcentagem de vitórias e derrotas utilizando a carta X
+(parâmetro) ocorridas em um intervalo de timestamps (parâmetro).''', response_model=Any)
+def query1(request: Request,cardId: str,min_timestamp: int, max_timestamp: int):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_win_rate_and_lose_rate_by_cardIds_and_timestamps(cardId, [min_timestamp, max_timestamp])
+
 
 @router.get("/deck/{min_timestamp}/{max_timestamp}/{winrate}", response_description='''
 Lista os decks completos que produziram mais de X% (parâmetro) de

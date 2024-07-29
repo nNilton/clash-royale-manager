@@ -90,6 +90,74 @@ class BattleLogCombinationRepository:
             }
         ])
 
+    def get_win_rate_and_lose_rate_by_cardIds_and_timestamps(self, cardId: str, timestamps:list):
+        self.change_database(BattleLogCombination.V1)
+        return self.collection.aggregate([
+            {
+                '$match': {
+                    'cardsIds': f'{cardId}',
+                    'timestamp': {
+                        '$gte': timestamps[0],
+                        '$lte': timestamps[1]
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'totalMatches': {
+                        '$sum': 1
+                    },
+                    'wins': {
+                        '$sum': {
+                            '$cond': [
+                                '$victory', 1, 0
+                            ]
+                        }
+                    },
+                    'loses': {
+                        '$sum': {
+                            '$cond': [
+                                '$victory', 0, 1
+                            ]
+                        }
+                    }
+                }
+            }, {
+                '$project': {
+                    'winRate': {
+                        '$cond': {
+                            'if': {
+                                '$gt': [
+                                    '$totalMatches', 0
+                                ]
+                            },
+                            'then': {
+                                '$divide': [
+                                    '$wins', '$totalMatches'
+                                ]
+                            },
+                            'else': 0
+                        }
+                    },
+                    'loseRate': {
+                        '$cond': {
+                            'if': {
+                                '$gt': [
+                                    '$totalMatches', 0
+                                ]
+                            },
+                            'then': {
+                                '$divide': [
+                                    '$loses', '$totalMatches'
+                                ]
+                            },
+                            'else': 0
+                        }
+                    }
+                }
+            }
+        ])
+
     def get_lose_count_by_cardIds_and_timestamps(self, cardsIds:str, timestamp: list):
         self.change_database(BattleLogCombination.list()[len(cardsIds.split('-'))-1])
         return self.collection.aggregate([
