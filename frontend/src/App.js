@@ -1,6 +1,15 @@
 import React, {useState} from 'react';
 import axios from 'axios';
-import {TextField, Button, Card, CardContent, Typography, CircularProgress, Container} from '@mui/material';
+import {
+    TextField,
+    Button,
+    Card,
+    CardContent,
+    Typography,
+    CircularProgress,
+    Container,
+    FormControl, FormHelperText
+} from '@mui/material';
 import './App.css';
 import {useCards} from './context/CardsContext';
 import {FormWinRate} from './forms/FormWinRate';
@@ -101,18 +110,18 @@ function App() {
         }
     };
 
-    const renderInputs = (fields) => {
+    const renderInputs = (fields, descriptions) => {
         return fields.map((field, index) => (
-            <TextField
-                key={index}
-                label={field.charAt(0).toUpperCase() + field.slice(1)}
-                name={field}
-                value={params[field]}
-                onChange={handleChange}
-                variant="outlined"
-                margin="normal"
-                fullWidth
-            />
+            <FormControl key={index} margin="normal" fullWidth>
+                <TextField
+                    label={field.charAt(0).toUpperCase() + field.slice(1)}
+                    name={field}
+                    value={params[field]}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+                <FormHelperText>{descriptions[index]}</FormHelperText>
+            </FormControl>
         ));
     };
 
@@ -137,7 +146,7 @@ function App() {
                 {activeSection === 'deck' && (
                     <Card className="card">
                         <CardContent>
-                            {renderInputs(['param1', 'param2', 'param3'])}
+                            {renderInputs(['param1', 'param2', 'param3'], ['min_timestamp', 'max_timestamp', 'winrate'])}
                             <Button variant="contained" color="secondary" onClick={fetchDeck} disabled={loading}>
                                 Submit
                             </Button>
@@ -156,7 +165,7 @@ function App() {
                 {activeSection === 'comboCards' && (
                     <Card className="card">
                         <CardContent>
-                            {renderInputs(['param1', 'param2', 'param3', 'param4'])}
+                            {renderInputs(['param1', 'param2', 'param3', 'param4'], ['size', 'min_timestamp', 'max_timestamp', 'winrate'])}
                             <Button variant="contained" color="secondary" onClick={fetchComboCards} disabled={loading}>
                                 Submit
                             </Button>
@@ -173,7 +182,7 @@ function App() {
                 {activeSection === 'mostPickedCards' && (
                     <Card className="card">
                         <CardContent>
-                            {renderInputs(['param1'])}
+                            {renderInputs(['param1'], ['size'])}
                             <Button variant="contained" color="secondary" onClick={fetchTenMostPickedCards}
                                     disabled={loading}>
                                 Submit
@@ -191,7 +200,7 @@ function App() {
                 {activeSection === 'mostPopularCards' && (
                     <Card className="card">
                         <CardContent>
-                            {renderInputs(['param1'])}
+                            {renderInputs(['param1'], ['criteria'])}
                             <Button variant="contained" color="secondary" onClick={fetchMostPopularCards}
                                     disabled={loading}>
                                 Submit
