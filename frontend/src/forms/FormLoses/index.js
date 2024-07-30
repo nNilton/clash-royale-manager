@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { TextField, Button, Card, CardContent, Typography, CircularProgress, Container } from '@mui/material';
+import React, {useState} from 'react';
+import {TextField, Button, Card, CardContent, Typography, CircularProgress, Container} from '@mui/material';
 import '../../App.css';
-import { SearchCard } from '../../components/SearchCard';
+import {SearchCard} from '../../components/SearchCard';
 import api from '../../config/api';
-import { useSearchMultipleCards } from '../../components/SearchMultipleCards/hooks';
-import { SearchMultipleCards } from '../../components/SearchMultipleCards';
+import {useSearchMultipleCards} from '../../components/SearchMultipleCards/hooks';
+import {SearchMultipleCards} from '../../components/SearchMultipleCards';
 
-export function FormLoses({ activeSection, setActiveSection }) {
-    const { countFields, handleAddCard, handleSetValue, handleCloseCard } = useSearchMultipleCards()
+export function FormLoses({activeSection, setActiveSection}) {
+    const {countFields, handleAddCard, handleSetValue, handleCloseCard} = useSearchMultipleCards()
     const [minTimeStampValue, setMinTimeStampValue] = useState(0)
     const [maxTimeStampValue, setMaxTimeStampValue] = useState(0)
 
@@ -24,8 +24,7 @@ export function FormLoses({ activeSection, setActiveSection }) {
         } catch (error) {
 
         }
-
-    };
+    }
 
 
     async function handleSubmit() {
@@ -39,12 +38,10 @@ export function FormLoses({ activeSection, setActiveSection }) {
             const data = await fetchLoses(concatenatedString, minTimeStampValue, maxTimeStampValue)
             setResults(data)
             setIsLoading(false)
-        }
-        else {
+        } else {
             alert("Preencha todos os dados")
         }
     }
-
 
 
     return (<div className="section">
@@ -54,7 +51,8 @@ export function FormLoses({ activeSection, setActiveSection }) {
         {activeSection === 'loses' && (
             <Card className="card">
                 <CardContent>
-                    <SearchMultipleCards countFields={countFields} handleAddCard={handleAddCard} handleCloseCard={handleCloseCard} handleSetValue={handleSetValue} />
+                    <SearchMultipleCards countFields={countFields} handleAddCard={handleAddCard}
+                                         handleCloseCard={handleCloseCard} handleSetValue={handleSetValue}/>
                     <TextField
                         label={"Menor Data"}
                         name={"minTimeStampValue"}
@@ -79,17 +77,17 @@ export function FormLoses({ activeSection, setActiveSection }) {
                     />
 
                     <Button variant="contained" color="secondary" onClick={handleSubmit}
-                        disabled={isLoading}
+                            disabled={isLoading}
                     >
                         Submit
                     </Button>
                     {
-                        isLoading && <CircularProgress />
+                        isLoading && <CircularProgress/>
                     }
                     {
                         results && results.length > 0 ? <div>
                             {results.map(item => (
-                                <div key={item._id} style={{ marginBottom: '10px' }}>
+                                <div key={item._id} style={{marginBottom: '10px'}}>
                                     <div><strong>ID:</strong> {item._id}</div>
                                     <div><strong>totalMatches:</strong> {item.totalMatches}</div>
                                     <div><strong>loses:</strong> {item.loses}</div>

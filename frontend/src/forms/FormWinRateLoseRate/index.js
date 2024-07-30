@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { TextField, Button, Card, CardContent, Typography, CircularProgress, Container } from '@mui/material';
+import React, {useState} from 'react';
+import {TextField, Button, Card, CardContent, Typography, CircularProgress, Container} from '@mui/material';
 import '../../App.css';
-import { SearchCard } from '../../components/SearchCard';
+import {SearchCard} from '../../components/SearchCard';
 import api from '../../config/api';
 
 
-export function FormWinRateLoseRate({ activeSection, setActiveSection }) {
+export function FormWinRateLoseRate({activeSection, setActiveSection}) {
     const [cardValue, setCardValue] = useState(null)
     const [minTimeStampValue, setMinTimeStampValue] = useState(0)
     const [maxTimeStampValue, setMaxTimeStampValue] = useState(0)
@@ -23,8 +23,7 @@ export function FormWinRateLoseRate({ activeSection, setActiveSection }) {
         } catch (error) {
 
         }
-
-    };
+    }
 
 
     async function handleSubmit() {
@@ -35,8 +34,7 @@ export function FormWinRateLoseRate({ activeSection, setActiveSection }) {
             const data = await fetchWinRateLoseRate(cardId, minTimeStampValue, maxTimeStampValue)
             setResults(data)
             setIsLoading(false)
-        }
-        else {
+        } else {
             alert("Preencha todos os dados")
         }
     }
@@ -48,7 +46,7 @@ export function FormWinRateLoseRate({ activeSection, setActiveSection }) {
         {activeSection === 'winRateLoseRate' && (
             <Card className="card">
                 <CardContent>
-                    <SearchCard value={cardValue} setValue={setCardValue} />
+                    <SearchCard value={cardValue} setValue={setCardValue}/>
                     <TextField
                         label={"Menor Data"}
                         name={"minTimeStampValue"}
@@ -72,19 +70,19 @@ export function FormWinRateLoseRate({ activeSection, setActiveSection }) {
                         fullWidth
                     />
                     <Button variant="contained" color="secondary"
-                        onClick={handleSubmit}
-                        disabled={isLoading}
+                            onClick={handleSubmit}
+                            disabled={isLoading}
                     >
                         Submit
                     </Button>
                     {
-                        isLoading && <CircularProgress />
+                        isLoading && <CircularProgress/>
                     }
 
                     {
                         results && results.length > 0 ? <div>
                             {results.map(item => (
-                                <div key={item._id} style={{ marginBottom: '10px' }}>
+                                <div key={item._id} style={{marginBottom: '10px'}}>
                                     <div><strong>ID:</strong> {item._id}</div>
                                     <div><strong>Win Rate:</strong> {item.winRate}</div>
                                     <div><strong>Lose Rate:</strong> {item.loseRate}</div>

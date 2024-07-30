@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { TextField, Button, Card, CardContent, Typography, CircularProgress, Container } from '@mui/material';
+import React, {useState} from 'react';
+import {TextField, Button, Card, CardContent, Typography, CircularProgress, Container} from '@mui/material';
 import '../../App.css';
-import { SearchCard } from '../../components/SearchCard';
+import {SearchCard} from '../../components/SearchCard';
 import api from '../../config/api';
 
-export function FormWinRate({ activeSection, setActiveSection }) {
+export function FormWinRate({activeSection, setActiveSection}) {
     const [cardValue, setCardValue] = useState(null)
     const [trophiesValue, setTrophiesValue] = useState("")
 
@@ -34,8 +34,7 @@ export function FormWinRate({ activeSection, setActiveSection }) {
             const data = await fetchWinRate(cardId, trophiesDiff)
             setResults(data)
             setIsLoading(false)
-        }
-        else {
+        } else {
             alert("Preencha todos os dados")
         }
     }
@@ -47,7 +46,7 @@ export function FormWinRate({ activeSection, setActiveSection }) {
         {activeSection === 'winRate' && (
             <Card className="card">
                 <CardContent>
-                    <SearchCard value={cardValue} setValue={setCardValue} />
+                    <SearchCard value={cardValue} setValue={setCardValue}/>
 
                     <TextField
                         label={"Porcentagem de diferença de trófeus"}
@@ -69,12 +68,12 @@ export function FormWinRate({ activeSection, setActiveSection }) {
                         Submit
                     </Button>
                     {
-                        isLoading && <CircularProgress />
+                        isLoading && <CircularProgress/>
                     }
                     {
                         results && results.length > 0 ? <div>
                             {results.map(item => (
-                                <div key={item._id} style={{ marginBottom: '10px' }}>
+                                <div key={item._id} style={{marginBottom: '10px'}}>
                                     <div><strong>ID:</strong> {item._id}</div>
                                     <div><strong>Win Rate:</strong> {item.winRate}</div>
                                 </div>
