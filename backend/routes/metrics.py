@@ -42,3 +42,26 @@ vitórias ocorridas em um intervalo de timestamps (parâmetro).''', response_mod
 def query5(request: Request, size: int, min_timestamp: int, max_timestamp: int, winrate: float):
     battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
     return battlelog_combination_repo.get_combo_cards_by_size_and_timestamp_and_win_rate(size, [min_timestamp,max_timestamp], winrate)
+
+@router.get("/ten-most-picked-cards/{size}", response_description='''
+Lista os 10 combo de cartas (eg: carta 1, carta 2, carta 3... carta n) de
+tamanho N (parâmetro) que foram mais jogadas.''', response_model=Any)
+def query6(request: Request, size:int):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_ten_most_picked_cards(size)
+
+@router.get("/ten-most-popular-decks/{criteria]", response_description='''
+Lista os 10 decks de 8 cartas que foram mais populares (jogados entre jogadores
+diferentes) obedecendo um criterio minimo de popularidade (parametro) (ex: ao 
+menos 3 jogadores diferentes)''', response_model=Any)
+def query7(request: Request, criteria:int):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_ten_most_popular_decks(criteria)
+
+@router.get("/card/highest-crownDiff", response_description='''
+Retorna a carta que conquistou maior diferença de coroas até o momento
+(coroas conquistadas pelo usuario da carta - coroas conquistadas pelo
+adversario)''', response_model=Any)
+def query8(request: Request):
+    battlelog_combination_repo = BattleLogCombinationRepository(request.app.database)
+    return battlelog_combination_repo.get_card_with_highest_crownDiff()
