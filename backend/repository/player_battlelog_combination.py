@@ -240,3 +240,84 @@ class BattleLogCombinationRepository:
                 }
             }
         ])
+
+    def get_ten_most_picked_cards(self, size:int):
+        self.change_database(BattleLogCombination.list()[size-1])
+        return self.collection.aggregate([
+            {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'totalMatches': {
+                        '$sum': 1
+                    }
+                }
+            }, {
+                '$sort': {
+                    'totalMatches': -1
+                }
+            }, {
+                '$limit': 10
+            }
+        ])
+
+    def get_ten_most_popular_decks(self, criteria:int):
+        self.change_database(BattleLogCombination.V8)
+        return self.collection.aggregate([
+            {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'uniqueTags': {
+                        '$addToSet': '$tag'
+                    }
+                }
+            }, {
+                '$project': {
+                    'uniqueTags': 1,
+                    'tagCount': {
+                        '$size': '$uniqueTags'
+                    }
+                }
+            }, {
+                '$match': {
+                    'tagCount': {
+                        '$gte': criteria
+                    }
+                }
+            }, {
+                '$sort': {
+                    'tagCount': -1
+                }
+            }, {
+                '$limit': 10
+            }
+        ])
+
+    def get_card_with_highest_crownDiff(self):
+        self.change_database(BattleLogCombination.V1)
+        return self.collection.aggregate([
+            {
+                '$group': {
+                    '_id': '$cardsIds',
+                    'totalCrowns': {
+                        '$sum': '$crowns'
+                    },
+                    'totalCrownsOpponent': {
+                        '$sum': '$crownsOpponent'
+                    }
+                }
+            }, {
+                '$addFields': {
+                    'totalDifference': {
+                        '$subtract': [
+                            '$totalCrowns', '$totalCrownsOpponent'
+                        ]
+                    }
+                }
+            }, {
+                '$sort': {
+                    'totalDifference': -1
+                }
+            }, {
+                '$limit': 1
+            }
+        ])
