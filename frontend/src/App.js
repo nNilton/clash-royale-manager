@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Card, CardContent, Typography, CircularProgress, Container } from '@mui/material';
 import './App.css';
+import { useCards } from './context/CardsContext';
+import { FormWinRate } from './forms/FormWinRate';
+import { FormWinRateLoseRate } from './forms/FormWinRateLoseRate';
+import { FormLoses } from './forms/FormLoses';
 
-let url = `127.0.0.1`;
+export let url = `127.0.0.1`;
 
 function App() {
+  const { isLoading } = useCards()
+
+
   const [params, setParams] = useState({
     param1: '',
     param2: '',
@@ -29,17 +36,6 @@ function App() {
     });
   };
 
-  const fetchWinRateLoseRate = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://${url}:8000/metrics/win-rate/lose-rate/${params.param1}/${params.param2}/${params.param3}`);
-      setResults({ ...results, winRateLoseRate: response.data });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchDeck = async () => {
     setLoading(true);
@@ -53,29 +49,6 @@ function App() {
     }
   };
 
-  const fetchLoses = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://${url}:8000/metrics/loses/${params.param1}/${params.param2}/${params.param3}`);
-      setResults({ ...results, loses: response.data });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchWinRate = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://${url}:8000/metrics/win-rate/${params.param1}/${params.param2}`);
-      setResults({ ...results, winRate: response.data });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchComboCards = async () => {
     setLoading(true);
@@ -108,28 +81,16 @@ function App() {
     return <pre>{JSON.stringify(data, null, 2)}</pre>;
   };
 
+  if (isLoading) {
+    return <div>Carregando...</div>
+  }
+
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Typography variant="h2" align="center" gutterBottom>
         Clash Royale Metrics
       </Typography>
-      <div className="section">
-        <Button variant="contained" color="primary" onClick={() => setActiveSection('winRateLoseRate')}>
-          Fetch Win Rate / Lose Rate
-        </Button>
-        {activeSection === 'winRateLoseRate' && (
-          <Card className="card">
-            <CardContent>
-              {renderInputs(['param1', 'param2', 'param3'])}
-              <Button variant="contained" color="secondary" onClick={fetchWinRateLoseRate} disabled={loading}>
-                Submit
-              </Button>
-              {loading && <CircularProgress />}
-              {results.winRateLoseRate && renderResults(results.winRateLoseRate)}
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <FormWinRateLoseRate activeSection={activeSection} setActiveSection={setActiveSection}  />
       <div className="section">
         <Button variant="contained" color="primary" onClick={() => setActiveSection('deck')}>
           Fetch Deck
@@ -147,40 +108,8 @@ function App() {
           </Card>
         )}
       </div>
-      <div className="section">
-        <Button variant="contained" color="primary" onClick={() => setActiveSection('loses')}>
-          Fetch Loses
-        </Button>
-        {activeSection === 'loses' && (
-          <Card className="card">
-            <CardContent>
-              {renderInputs(['param1', 'param2', 'param3'])}
-              <Button variant="contained" color="secondary" onClick={fetchLoses} disabled={loading}>
-                Submit
-              </Button>
-              {loading && <CircularProgress />}
-              {results.loses && renderResults(results.loses)}
-            </CardContent>
-          </Card>
-        )}
-      </div>
-      <div className="section">
-        <Button variant="contained" color="primary" onClick={() => setActiveSection('winRate')}>
-          Fetch Win Rate
-        </Button>
-        {activeSection === 'winRate' && (
-          <Card className="card">
-            <CardContent>
-              {renderInputs(['param1', 'param2'])}
-              <Button variant="contained" color="secondary" onClick={fetchWinRate} disabled={loading}>
-                Submit
-              </Button>
-              {loading && <CircularProgress />}
-              {results.winRate && renderResults(results.winRate)}
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <FormLoses  activeSection={activeSection} setActiveSection={setActiveSection} />
+      <FormWinRate activeSection={activeSection} setActiveSection={setActiveSection} />
       <div className="section">
         <Button variant="contained" color="primary" onClick={() => setActiveSection('comboCards')}>
           Fetch Combo Cards
