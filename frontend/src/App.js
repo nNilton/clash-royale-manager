@@ -15,6 +15,8 @@ import {useCards} from './context/CardsContext';
 import {FormWinRate} from './forms/FormWinRate';
 import {FormWinRateLoseRate} from './forms/FormWinRateLoseRate';
 import {FormLoses} from './forms/FormLoses';
+import { FormMostPicked } from './forms/FormMostPicked';
+import { FormMostPopularDeck } from './forms/FormMostPopularDeck';
 
 export let url = `127.0.0.1`;
 
@@ -175,42 +177,8 @@ function App() {
                     </Card>
                 )}
             </div>
-            <div className="section">
-                <Button variant="contained" color="primary" onClick={() => setActiveSection('mostPickedCards')}>
-                    Fetch Most Picked Cards
-                </Button>
-                {activeSection === 'mostPickedCards' && (
-                    <Card className="card">
-                        <CardContent>
-                            {renderInputs(['param1'], ['size'])}
-                            <Button variant="contained" color="secondary" onClick={fetchTenMostPickedCards}
-                                    disabled={loading}>
-                                Submit
-                            </Button>
-                            {loading && <CircularProgress/>}
-                            {results.mostPickedCards && renderResults(results.mostPickedCards)}
-                        </CardContent>
-                    </Card>
-                )}
-            </div>
-            <div className="section">
-                <Button variant="contained" color="primary" onClick={() => setActiveSection('mostPopularCards')}>
-                    Fetch Most Popular Cards
-                </Button>
-                {activeSection === 'mostPopularCards' && (
-                    <Card className="card">
-                        <CardContent>
-                            {renderInputs(['param1'], ['criteria'])}
-                            <Button variant="contained" color="secondary" onClick={fetchMostPopularCards}
-                                    disabled={loading}>
-                                Submit
-                            </Button>
-                            {loading && <CircularProgress/>}
-                            {results.mostPopularCards && renderResults(results.mostPopularCards)}
-                        </CardContent>
-                    </Card>
-                )}
-            </div>
+            <FormMostPicked activeSection={activeSection} setActiveSection={setActiveSection} />
+            <FormMostPopularDeck activeSection={activeSection} setActiveSection={setActiveSection} />
             <div className="section">
                 <Button variant="contained" color="primary" onClick={() => setActiveSection('crownDiff')}>
                     Fetch Highest Crown Diff

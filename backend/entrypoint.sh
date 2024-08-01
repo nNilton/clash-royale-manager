@@ -12,4 +12,4 @@
 #echo "MongoDB is up and running!"
 
 # Iniciar a aplicação FastAPI
-exec pipenv run uvicorn main:app --host 0.0.0.0 --port 8000
+exec pipenv run uvicorn backend.main:app --host 0.0.0.0 --port 8000

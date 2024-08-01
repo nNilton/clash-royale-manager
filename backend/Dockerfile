@@ -7,7 +7,7 @@ RUN pip install pipenv
 WORKDIR /app
 
 # Copiar o Pipfile e Pipfile.lock da pasta pai
-COPY ../Pipfile ../Pipfile.lock ./
+COPY ../Pipfile ./
 
 # Instalar as dependências do projeto
 RUN pipenv install

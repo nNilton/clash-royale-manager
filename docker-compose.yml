@@ -1,11 +1,11 @@
 services:
-  mongo:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - "27017:27017"
+#  mongo:
+#    image: mongo:latest
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    ports:
+#      - "27017:27017"
 
   backend:
     build:
@@ -15,8 +15,8 @@ services:
     ports:
       - "5000:5000"
       - "8000:8000"
-    depends_on:
-      - mongo
+#    depends_on:
+#      - mongo
 
   frontend:
     build: ./frontend

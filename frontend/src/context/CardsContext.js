@@ -18,6 +18,11 @@ export const CardsProvider = ({ children }) => {
     return slicedData;
   }
 
+  function findById(cardId) {
+    const cardItem = data.find(item => item["_id"] == cardId);
+    return cardItem;
+  }
+
   useEffect(() => {
     fetchData();
 
@@ -46,7 +51,7 @@ export const CardsProvider = ({ children }) => {
   };
 
   return (
-    <DataContext.Provider value={{ data, isLoading, dataFiltered, searchByName }}>
+    <DataContext.Provider value={{ data, isLoading, dataFiltered, findById, searchByName }}>
       {children}
     </DataContext.Provider>
   );

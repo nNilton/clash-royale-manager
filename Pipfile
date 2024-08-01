@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 jsonify = "*"
-fastapi = {extras = ["all"], version = "*"}
-pymongo = {extras = ["srv"], version = "*"}
+fastapi = "*"
+pymongo = "*"
 python-dotenv = "*"
 requests = "*"
 
